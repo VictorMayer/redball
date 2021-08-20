@@ -58,6 +58,15 @@
             speedY: 10,
         };
 
+        let friendly = {
+            x: 0,
+            y: 0,
+            radius: 15,
+            color: "green",
+            speedX: 10,
+            speedY: 10,
+        };
+
         function onMouseMove(event) {
             player.x = event.clientX;
             player.y = event.clientY;
@@ -74,34 +83,30 @@
             context.clearRect(0, 0, canvas.width, canvas.height);
         }
 
-        function drawPlayer() {
-            drawCircle(player.x, player.y, player.radius, player.color);
+        function drawBall(ball) {
+            drawCircle(ball.x, ball.y, ball.radius, ball.color);
         }
 
-        function drawEnemy() {
-            drawCircle(enemy.x, enemy.y, enemy.radius, enemy.color);
+        function moveBall(ball) {
+            ball.x += ball.speedX;
+            ball.y += ball.speedY;
         }
 
-        function moveEnemy() {
-            enemy.x += enemy.speedX;
-            enemy.y += enemy.speedY;
-        }
-
-        function checkEnemyCollision() {
+        function checkBallCollision(ball) {
             const distance = Math.sqrt(
-                (player.x - enemy.x) ** 2 + (player.y - enemy.y) ** 2
+                (player.x - ball.x) ** 2 + (player.y - ball.y) ** 2
             );
 
-            return distance < player.radius + enemy.radius;
+            return distance < player.radius + ball.radius;
         }
 
-        function bounceEnemyOnEdge() {
-            if (enemy.x < 0 || enemy.x > screenWidth) {
-                enemy.speedX *= -1;
+        function bounceBallOnEdge(ball) {
+            if (ball.x < 0 || ball.x > screenWidth) {
+                ball.speedX *= -1;
             }
 
-            if (enemy.y < 0 || enemy.y > screenHeight) {
-                enemy.speedY *= -1;
+            if (ball.y < 0 || ball.y > screenHeight) {
+                ball.speedY *= -1;
             }
         }
 
@@ -134,17 +139,17 @@
 
         function gameLoop() {
             clearScreen();
-            moveEnemy();
+            moveBall(enemy);
 
-            if (checkEnemyCollision()) {
+            if (checkBallCollision(enemy)) {
                 endGame();
             }
 
-            bounceEnemyOnEdge();
+            bounceBallOnEdge(enemy);
             increaseEnemySpeed();
 
-            drawPlayer();
-            drawEnemy();
+            drawBall(player);
+            drawBall(enemy);
         }
 
         startGame();
